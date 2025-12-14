@@ -1,21 +1,28 @@
-from datetime import datetime
 from app.models import db
-import uuid
+from app.models.BaseModel import BaseModel
 
-class Book(db.Model):
+class Book(BaseModel, db.Model):
     __tablename__ = 'books'
     
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(datetime.timezone.utc))
-    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now(datetime.timezone.utc), onupdate=datetime.now(datetime.timezone.utc))
-    deleted_at = db.Column(db.DateTime, nullable=True)
+    # Book-specific fields
+    title = db.Column(db.String(255), nullable=False)
+    isbn = db.Column(db.String(50), unique=True, nullable=True)
+    price = db.Column(db.Numeric(18, 2), nullable=False)
+    stock_quantity = db.Column(db.Integer, nullable=False, default=0)
+    description = db.Column(db.Text, nullable=True)
     
-    # Add your book-specific fields here (title, author, price, etc.)
+    # Foreign Keys
+    author_id = db.Column(db.String(36), db.ForeignKey('authors.id'), nullable=True)
+    category_id = db.Column(db.String(36), db.ForeignKey('categories.id'), nullable=True)
     
     def to_dict(self):
         return {
-            'id': self.id,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
-            'deleted_at': self.deleted_at.isoformat() if self.deleted_at else None,
+            **self.base_to_dict(),
+            'title': self.title,
+            'isbn': self.isbn,
+            'price': float(self.price) if self.price else None,
+            'stock_quantity': self.stock_quantity,
+            'description': self.description,
+            'author_id': self.author_id,
+            'category_id': self.category_id,
         }

@@ -1,4 +1,5 @@
 from app.models import User, db
+from app import bcrypt
 from datetime import datetime
 
 class UserService:
@@ -13,11 +14,14 @@ class UserService:
     
     @staticmethod
     def create_user(data):
+        # Hash password before storing
+        hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        
         new_user = User(
             username=data['username'],
             name=data['name'],
             email=data['email'],
-            password=data['password'],  # TODO: Hash password in production!
+            password=hashed_password,
             role=data.get('role', 0),
             phone_number=data.get('phone_number'),
             address=data.get('address'),
