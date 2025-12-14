@@ -2,7 +2,7 @@
 
 A comprehensive RESTful backend for an E-Commerce Book Store built with Flask. This project provides secure APIs for user registration, browsing books, managing shopping carts, order processing, and admin management.
 
-## 🚀 Features
+## Features
 
 - **User Management**: Registration, login, JWT-based authentication
 - **Book Catalog**: Browse, filter, and search books by category, author, and price
@@ -12,7 +12,7 @@ A comprehensive RESTful backend for an E-Commerce Book Store built with Flask. T
 - **Reviews**: Users can rate and review books
 - **Security**: Password hashing, JWT tokens, role-based access control (RBAC)
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Language**: Python 3.10+
 - **Framework**: Flask
@@ -22,14 +22,14 @@ A comprehensive RESTful backend for an E-Commerce Book Store built with Flask. T
 - **Migrations**: Flask-Migrate
 - **Development**: VS Code, Git
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.10 or higher
-- PostgreSQL 12 or higher
+- PostgreSQL
 - pip (Python package manager)
 - Postman (for API testing)
 
-## 🔧 Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the Repository
 
@@ -95,7 +95,7 @@ python run.py
 
 The API will be available at: `http://localhost:5000`
 
-## 📚 API Documentation
+## API Documentation
 
 Complete API documentation available in [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md)
 
@@ -114,7 +114,7 @@ Complete API documentation available in [`API_DOCUMENTATION.md`](./API_DOCUMENTA
 | `/api/v1/admin/orders` | GET | Admin view all orders | Admin |
 | `/api/v1/books` | POST | Create book | Admin |
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 FlaskAPI/
@@ -165,18 +165,18 @@ FlaskAPI/
 └── QUICKSTART.md               # Quick start guide
 ```
 
-## 🔐 Security Features
+## Security Features
 
-- ✅ **JWT Authentication**: Secure token-based authentication
-- ✅ **Password Hashing**: Bcrypt for secure password storage
-- ✅ **Role-Based Access Control**: Admin vs regular user permissions
-- ✅ **Input Validation**: Comprehensive request validation
-- ✅ **SQL Injection Protection**: SQLAlchemy ORM with parameterized queries
-- ✅ **Stock Validation**: Prevent negative stock scenarios
-- ✅ **Transaction Handling**: Database transactions for order processing
-- ✅ **Row Locking**: Prevent race conditions on stock updates
+- **JWT Authentication**: Secure token-based authentication
+- **Password Hashing**: Bcrypt for secure password storage
+- **Role-Based Access Control**: Admin vs regular user permissions
+- **Input Validation**: Comprehensive request validation
+- **SQL Injection Protection**: SQLAlchemy ORM with parameterized queries
+- **Stock Validation**: Prevent negative stock scenarios
+- **Transaction Handling**: Database transactions for order processing
+- **Row Locking**: Prevent race conditions on stock updates
 
-## 🧪 Testing with Postman
+## Testing with Postman
 
 ### 1. Import Collection
 
@@ -196,12 +196,12 @@ See [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md) for complete endpoint detai
 5. **Checkout**: `POST /api/v1/orders/checkout`
 6. **View Orders**: `GET /api/v1/orders`
 
-## 👥 User Roles
+## User Roles
 
 - **Customer (role = 0)**: Browse books, manage cart, place orders, add reviews
 - **Admin (role >= 1)**: All customer permissions + manage books, authors, categories, and order fulfillment
 
-## 📊 Database Schema
+## Database Schema
 
 ### Core Entities
 - **User**: User accounts with authentication
@@ -219,7 +219,7 @@ All models inherit from `BaseModel` with common fields:
 - `is_deleted`, `deleted_at` (soft delete)
 - `created_by`, `role`, `is_active`
 
-## 🚧 Development
+## Development
 
 ### Run Migrations
 
@@ -236,14 +236,14 @@ flask db upgrade
 3. Database: `flaskapi_db`
 4. Navigate to Tables
 
-## 📖 Additional Documentation
+## Additional Documentation
 
 - [`SETUP_GUIDE.md`](./SETUP_GUIDE.md) - PostgreSQL and Postman setup
 - [`MIGRATION_JWT_GUIDE.md`](./MIGRATION_JWT_GUIDE.md) - Database migrations and JWT authentication
 - [`QUICKSTART.md`](./QUICKSTART.md) - Quick start instructions
 - [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md) - Complete API reference
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -251,17 +251,153 @@ flask db upgrade
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License.
 
-## 👨‍💻 Author
-
-**AhmadB23**
-
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Flask framework and extensions
 - SQLAlchemy ORM
 - PostgreSQL database
 - JWT authentication library
+
+## Database Design
+Following are the entities that are part of the database and are essential – for at least minimal Functional Requirements.
+1.	User (Admin and Customer)
+2.	Book
+3.	Author
+4.	Cart History
+5.	Cart Item
+6.	Category
+7.	Order Details
+8.	Order Items
+9.	Review
+### Entities Relationship
+
+#### 1. User Relationships
+**User → CartItem (One-to-Many)**
+- One user can have multiple cart items
+- User.cart_items → CartItem.user_id
+
+**User → OrderDetails (One-to-Many)**
+- One user can have multiple orders
+- User.orders → OrderDetails.user_id
+
+**User → OrderItem (One-to-Many)**
+- One user can have multiple order items
+- User.order_items → OrderItem.user_id
+
+**User → Review (One-to-Many)**
+- One user can write multiple reviews
+- User.reviews → Review.user_id
+
+**User → CartHistory (One-to-Many)**
+- One user can have multiple cart history records
+- User.cart_histories → CartHistory.user_id
+
+#### 2. Book Relationships
+**Book → Author (Many-to-One)**
+- Many books belong to one author
+- Book.author_id → Author.id
+- Author.books (backref)
+
+**Book → Category (Many-to-One)**
+- Many books belong to one category
+- Book.category_id → Category.id
+- Category.books (backref)
+
+**Book → CartItem (One-to-Many)**
+- One book can be in multiple carts
+- Book.cart_items → CartItem.book_id
+
+**Book → OrderItem (One-to-Many)**
+- One book can be in multiple orders
+- Book.order_items → OrderItem.book_id
+
+**Book → Review (One-to-Many)**
+- One book can have multiple reviews
+- Book.reviews → Review.book_id
+
+**Book → CartHistory (One-to-Many)**
+- One book can appear in multiple cart history records
+- Book.cart_histories → CartHistory.book_id
+
+#### 3. Author Relationships
+**Author → Book (One-to-Many)**
+- One author can write multiple books
+- Author.books → Book.author_id
+
+#### 4. Category Relationships
+**Category → Book (One-to-Many)**
+- One category can contain multiple books
+- Category.books → Book.category_id
+
+#### 5. Cart Item Relationships
+**CartItem → User (Many-to-One)**
+- Many cart items belong to one user
+- CartItem.user_id → User.id
+- User.cart_items (backref)
+
+**CartItem → Book (Many-to-One)**
+- Many cart items reference one book
+- CartItem.book_id → Book.id
+- Book.cart_items (backref)
+
+#### 6. Cart History Relationships
+**CartHistory → User (Many-to-One)**
+- Many cart history records belong to one user
+- CartHistory.user_id → User.id
+- User.cart_histories (backref)
+
+**CartHistory → Book (Many-to-One)**
+- Many cart history records reference one book
+- CartHistory.book_id → Book.id
+- Book.cart_histories (backref)
+
+**CartHistory → OrderItem (Many-to-One)**
+- Many cart history records reference one order item
+- CartHistory.order_item_id → OrderItem.id
+- OrderItem.cart_histories (backref)
+
+#### 7. Order Details Relationships
+**OrderDetails → User (Many-to-One)**
+- Many orders belong to one user
+- OrderDetails.user_id → User.id
+- User.orders (backref)
+
+**OrderDetails → OrderItem (One-to-Many)**
+- One order contains multiple order items
+- OrderDetails.order_items → OrderItem.order_details_id
+
+#### 8. Order Item Relationships
+**OrderItem → OrderDetails (Many-to-One)**
+- Many order items belong to one order
+- OrderItem.order_details_id → OrderDetails.id
+- OrderDetails.order_items (backref)
+
+**OrderItem → Book (Many-to-One)**
+- Many order items reference one book
+- OrderItem.book_id → Book.id
+- Book.order_items (backref)
+
+**OrderItem → User (Many-to-One)**
+- Many order items belong to one user
+- OrderItem.user_id → User.id
+- User.order_items (backref)
+
+**OrderItem → CartHistory (One-to-Many)**
+- One order item can have multiple cart history records
+- OrderItem.cart_histories → CartHistory.order_item_id
+
+#### 9. Review Relationships
+**Review → User (Many-to-One)**
+- Many reviews are written by one user
+- Review.user_id → User.id
+- User.reviews (backref)
+
+**Review → Book (Many-to-One)**
+- Many reviews are for one book
+- Review.book_id → Book.id
+- Book.reviews (backref)
+
