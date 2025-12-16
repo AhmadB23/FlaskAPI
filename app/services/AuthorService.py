@@ -1,5 +1,5 @@
 from app.models import Author, db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class AuthorService:
     
@@ -32,7 +32,7 @@ class AuthorService:
             return None
         
         author.author_name = data.get('author_name', author.author_name)
-        author.updated_at = datetime.utcnow()
+        author.updated_at = datetime.now(timezone.utc)
         db.session.commit()
         return author
     

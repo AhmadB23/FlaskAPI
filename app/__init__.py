@@ -27,7 +27,9 @@ def create_app(config_class=DevelopmentConfig):
     from app.routes.CategoryRoutes import category_bp
     from app.routes.BookRoutes import book_bp
     from app.routes.CartRoutes import cart_bp
+    from app.routes.CartHistoryRoutes import cart_history_bp
     from app.routes.OrderRoutes import order_bp
+    from app.routes.ReviewRoutes import review_bp
     
     # API v1 routes
     app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
@@ -36,7 +38,9 @@ def create_app(config_class=DevelopmentConfig):
     app.register_blueprint(category_bp, url_prefix='/api/v1')
     app.register_blueprint(book_bp, url_prefix='/api/v1')
     app.register_blueprint(cart_bp, url_prefix='/api/v1')
+    app.register_blueprint(cart_history_bp, url_prefix='/api/v1/cart-history')
     app.register_blueprint(order_bp, url_prefix='/api/v1')
+    app.register_blueprint(review_bp, url_prefix='/api/v1/reviews')
     
     # Legacy routes (keep for backward compatibility)
     app.register_blueprint(items_bp, url_prefix='/api')
