@@ -1,77 +1,174 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.AuthorService import AuthorService
-from app.models import User
+from app.utils.enums import is_admin
 
 author_bp = Blueprint("authors", __name__)
+author_service = AuthorService()
 
-def is_admin():
-    """Check if current user is admin (role >= 1)"""
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    return user and user.role >= 1
-
-# GET all authors
+# GET /authors - Get all authors
 @author_bp.route('/authors', methods=['GET'])
 def get_authors():
-    """Public endpoint to get all authors"""
-    authors = AuthorService.get_all_authors()
-    return jsonify([author.to_dict() for author in authors]), 200
+    """Get all authors"""
+    try:
+        # Check for search query parameter
+        search = request.args.get('search')
+        if search:
+            authors = author_service.search_authors(search)
+        else:
+            authors = author_service.get_all_authors()
+        
+        return jsonify({
+            'success': True,
+            'data': authors,
+            'message': 'Authors retrieved successfully',
+            'total': len(authors)
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Failed to retrieve authors'
+        }), 500
 
-# GET author by ID
+# GET /authors/<author_id> - Get author by ID
 @author_bp.route('/authors/<author_id>', methods=['GET'])
 def get_author(author_id):
     """Get author by ID"""
-    author = AuthorService.get_author_by_id(author_id)
-    if not author:
-        return jsonify({'error': 'Author not found'}), 404
-    return jsonify(author.to_dict()), 200
+    try:
+        author = author_service.get_author_by_id(author_id)
+        if not author:
+            return jsonify({
+                'success': False,
+                'error': 'Author not found',
+                'message': 'Author not found'
+            }), 404
+        
+        return jsonify({
+            'success': True,
+            'data': author,
+            'message': 'Author retrieved successfully'
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Failed to retrieve author'
+        }), 500
 
-# POST create author (Admin only)
+# POST /authors - Create author (Admin only)
 @author_bp.route('/authors', methods=['POST'])
 @jwt_required()
 def create_author():
     """Create new author - Admin only"""
-    if not is_admin():
-        return jsonify({'error': 'Admin access required'}), 403
-    
     try:
+        if not is_admin():
+            return jsonify({
+                'success': False,
+                'error': 'Admin access required',
+                'message': 'Permission denied'
+            }), 403
+        
         data = request.get_json()
         if not data.get('author_name'):
-            return jsonify({'error': 'Author name is required'}), 400
+            return jsonify({
+                'success': False,
+                'error': 'Author name is required',
+                'message': 'Missing required field'
+            }), 400
         
-        author = AuthorService.create_author(data)
-        return jsonify(author.to_dict()), 201
+        author = author_service.create_author(data)
+        return jsonify({
+            'success': True,
+            'data': author,
+            'message': 'Author created successfully'
+        }), 201
+        
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Validation error'
+        }), 400
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Failed to create author'
+        }), 500
 
-# PUT update author (Admin only)
+# PUT /authors/<author_id> - Update author (Admin only)
 @author_bp.route('/authors/<author_id>', methods=['PUT'])
 @jwt_required()
 def update_author(author_id):
     """Update author - Admin only"""
-    if not is_admin():
-        return jsonify({'error': 'Admin access required'}), 403
-    
     try:
+        if not is_admin():
+            return jsonify({
+                'success': False,
+                'error': 'Admin access required',
+                'message': 'Permission denied'
+            }), 403
+        
         data = request.get_json()
-        author = AuthorService.update_author(author_id, data)
+        author = author_service.update_author(author_id, data)
+        
         if not author:
-            return jsonify({'error': 'Author not found'}), 404
-        return jsonify(author.to_dict()), 200
+            return jsonify({
+                'success': False,
+                'error': 'Author not found',
+                'message': 'Author not found'
+            }), 404
+        
+        return jsonify({
+            'success': True,
+            'data': author,
+            'message': 'Author updated successfully'
+        }), 200
+        
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Validation error'
+        }), 400
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Failed to update author'
+        }), 500
 
-# DELETE author (Admin only)
+# DELETE /authors/<author_id> - Delete author (Admin only)
 @author_bp.route('/authors/<author_id>', methods=['DELETE'])
 @jwt_required()
 def delete_author(author_id):
     """Delete author - Admin only"""
-    if not is_admin():
-        return jsonify({'error': 'Admin access required'}), 403
-    
-    success = AuthorService.delete_author(author_id)
-    if not success:
-        return jsonify({'error': 'Author not found'}), 404
-    return jsonify({'message': 'Author deleted successfully'}), 200
+    try:
+        if not is_admin():
+            return jsonify({
+                'success': False,
+                'error': 'Admin access required',
+                'message': 'Permission denied'
+            }), 403
+        
+        success = author_service.delete_author(author_id)
+        if not success:
+            return jsonify({
+                'success': False,
+                'error': 'Author not found',
+                'message': 'Author not found'
+            }), 404
+        
+        return jsonify({
+            'success': True,
+            'message': 'Author deleted successfully'
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Failed to delete author'
+        }), 500
 

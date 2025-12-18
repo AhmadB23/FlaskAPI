@@ -1,49 +1,70 @@
-from app.models import Author, db
-from datetime import datetime, timezone
+from app.repositories.AuthorRepository import AuthorRepository
+from app.models import db
+from typing import List, Optional, Dict
 
 class AuthorService:
+    """Service layer for Author business logic"""
     
-    @staticmethod
-    def get_all_authors():
+    def __init__(self):
+        self.author_repository = AuthorRepository()
+    
+    def get_all_authors(self) -> List[Dict]:
         """Get all active authors"""
-        return Author.query.filter_by(is_deleted=False).all()
+        authors = self.author_repository.get_all()
+        return [author.to_dict() for author in authors]
     
-    @staticmethod
-    def get_author_by_id(author_id):
+    def get_author_by_id(self, author_id: str) -> Optional[Dict]:
         """Get author by ID"""
-        return Author.query.filter_by(id=author_id, is_deleted=False).first()
+        author = self.author_repository.get_by_id(author_id)
+        return author.to_dict() if author else None
     
-    @staticmethod
-    def create_author(data):
+    def search_authors(self, name: str) -> List[Dict]:
+        """Search authors by name"""
+        authors = self.author_repository.search_by_name(name)
+        return [author.to_dict() for author in authors]
+    
+    def create_author(self, data: dict) -> Dict:
         """Create new author"""
-        new_author = Author(
-            author_name=data['author_name'],
-            created_by=data.get('created_by', '')
-        )
-        db.session.add(new_author)
+        # Check if author already exists
+        existing = self.author_repository.get_by_name(data['author_name'])
+        if existing:
+            raise ValueError('Author with this name already exists')
+        
+        author_data = {
+            'author_name': data['author_name'],
+            'created_by': data.get('created_by', '')
+        }
+        
+        author = self.author_repository.create(author_data)
         db.session.commit()
-        return new_author
+        return author.to_dict()
     
-    @staticmethod
-    def update_author(author_id, data):
+    def update_author(self, author_id: str, data: dict) -> Optional[Dict]:
         """Update existing author"""
-        author = Author.query.filter_by(id=author_id, is_deleted=False).first()
+        author = self.author_repository.get_by_id(author_id)
         if not author:
             return None
         
-        author.author_name = data.get('author_name', author.author_name)
-        author.updated_at = datetime.now(timezone.utc)
+        # Check if new name conflicts with existing author
+        if 'author_name' in data and data['author_name'] != author.author_name:
+            existing = self.author_repository.get_by_name(data['author_name'])
+            if existing:
+                raise ValueError('Author with this name already exists')
+        
+        update_data = {
+            'author_name': data.get('author_name', author.author_name)
+        }
+        
+        updated_author = self.author_repository.update(author, update_data)
         db.session.commit()
-        return author
+        return updated_author.to_dict()
     
-    @staticmethod
-    def delete_author(author_id):
+    def delete_author(self, author_id: str) -> bool:
         """Soft delete author"""
-        author = Author.query.filter_by(id=author_id, is_deleted=False).first()
+        author = self.author_repository.get_by_id(author_id)
         if not author:
             return False
         
-        author.is_deleted = True
-        author.deleted_at = datetime.utcnow()
+        self.author_repository.delete(author)
         db.session.commit()
         return True

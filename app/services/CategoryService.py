@@ -1,49 +1,70 @@
-from app.models import Category, db
-from datetime import datetime
+from app.repositories.CategoryRepository import CategoryRepository
+from app.models import db
+from typing import List, Optional, Dict
 
 class CategoryService:
+    """Service layer for Category business logic"""
     
-    @staticmethod
-    def get_all_categories():
+    def __init__(self):
+        self.category_repository = CategoryRepository()
+    
+    def get_all_categories(self) -> List[Dict]:
         """Get all active categories"""
-        return Category.query.filter_by(is_deleted=False).all()
+        categories = self.category_repository.get_all()
+        return [category.to_dict() for category in categories]
     
-    @staticmethod
-    def get_category_by_id(category_id):
+    def get_category_by_id(self, category_id: str) -> Optional[Dict]:
         """Get category by ID"""
-        return Category.query.filter_by(id=category_id, is_deleted=False).first()
+        category = self.category_repository.get_by_id(category_id)
+        return category.to_dict() if category else None
     
-    @staticmethod
-    def create_category(data):
+    def search_categories(self, type_name: str) -> List[Dict]:
+        """Search categories by type"""
+        categories = self.category_repository.search_by_type(type_name)
+        return [category.to_dict() for category in categories]
+    
+    def create_category(self, data: dict) -> Dict:
         """Create new category"""
-        new_category = Category(
-            category_type=data['category_type'],
-            created_by=data.get('created_by', '')
-        )
-        db.session.add(new_category)
+        # Check if category already exists
+        existing = self.category_repository.get_by_type(data['category_type'])
+        if existing:
+            raise ValueError('Category with this type already exists')
+        
+        category_data = {
+            'category_type': data['category_type'],
+            'created_by': data.get('created_by', '')
+        }
+        
+        category = self.category_repository.create(category_data)
         db.session.commit()
-        return new_category
+        return category.to_dict()
     
-    @staticmethod
-    def update_category(category_id, data):
+    def update_category(self, category_id: str, data: dict) -> Optional[Dict]:
         """Update existing category"""
-        category = Category.query.filter_by(id=category_id, is_deleted=False).first()
+        category = self.category_repository.get_by_id(category_id)
         if not category:
             return None
         
-        category.category_type = data.get('category_type', category.category_type)
-        category.updated_at = datetime.utcnow()
+        # Check if new type conflicts with existing category
+        if 'category_type' in data and data['category_type'] != category.category_type:
+            existing = self.category_repository.get_by_type(data['category_type'])
+            if existing:
+                raise ValueError('Category with this type already exists')
+        
+        update_data = {
+            'category_type': data.get('category_type', category.category_type)
+        }
+        
+        updated_category = self.category_repository.update(category, update_data)
         db.session.commit()
-        return category
+        return updated_category.to_dict()
     
-    @staticmethod
-    def delete_category(category_id):
+    def delete_category(self, category_id: str) -> bool:
         """Soft delete category"""
-        category = Category.query.filter_by(id=category_id, is_deleted=False).first()
+        category = self.category_repository.get_by_id(category_id)
         if not category:
             return False
         
-        category.is_deleted = True
-        category.deleted_at = datetime.utcnow()
+        self.category_repository.delete(category)
         db.session.commit()
         return True

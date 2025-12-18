@@ -2,8 +2,24 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from app.models import User, db
 from app import bcrypt
+import re
 
 auth_bp = Blueprint('auth', __name__)
+
+def validate_email(email):
+    """Validate email format"""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email) is not None
+
+def validate_password_strength(password):
+    """Validate password strength - min 6 chars, at least 1 letter and 1 number"""
+    if len(password) < 6:
+        return False, "Password must be at least 6 characters long"
+    if not re.search(r'[A-Za-z]', password):
+        return False, "Password must contain at least one letter"
+    if not re.search(r'\d', password):
+        return False, "Password must contain at least one number"
+    return True, "Valid"
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -14,6 +30,19 @@ def register():
         # Validate required fields
         if not data.get('username') or not data.get('email') or not data.get('password'):
             return jsonify({'error': 'Username, email, and password are required'}), 400
+        
+        # Validate username (alphanumeric, 3-20 chars)
+        if not re.match(r'^[a-zA-Z0-9_]{3,20}$', data['username']):
+            return jsonify({'error': 'Username must be 3-20 alphanumeric characters'}), 400
+        
+        # Validate email format
+        if not validate_email(data['email']):
+            return jsonify({'error': 'Invalid email format'}), 400
+        
+        # Validate password strength
+        is_valid, msg = validate_password_strength(data['password'])
+        if not is_valid:
+            return jsonify({'error': msg}), 400
         
         # Check if user already exists
         if User.query.filter_by(username=data['username']).first():
@@ -56,7 +85,7 @@ def login():
     """Login user and return JWT tokens"""
     try:
         data = request.get_json()
-        
+        password = data.get('password')
         if not data.get('username') or not data.get('password'):
             return jsonify({'error': 'Username and password are required'}), 400
         
@@ -66,7 +95,7 @@ def login():
         ).first()
         
         if not user:
-            return jsonify({'error': 'Invalid credentials'}), 401
+            return jsonify({'error': 'username not found.'}), 401
         
         # Check if user is active
         if not user.is_active:
@@ -147,6 +176,52 @@ def change_password():
         db.session.commit()
         
         return jsonify({'message': 'Password changed successfully'}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+
+@auth_bp.route('/profile', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    """Update user profile"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        data = request.get_json()
+        
+        # Update allowed fields
+        if 'name' in data:
+            user.name = data['name']
+        if 'email' in data:
+            # Validate email
+            if not validate_email(data['email']):
+                return jsonify({'error': 'Invalid email format'}), 400
+            # Check if email already exists
+            existing = User.query.filter_by(email=data['email']).first()
+            if existing and existing.id != user.id:
+                return jsonify({'error': 'Email already exists'}), 409
+            user.email = data['email']
+        if 'phone_number' in data:
+            user.phone_number = data['phone_number']
+        if 'address' in data:
+            user.address = data['address']
+        if 'city' in data:
+            user.city = data['city']
+        if 'province' in data:
+            user.province = data['province']
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Profile updated successfully',
+            'user': user.to_dict()
+        }), 200
         
     except Exception as e:
         db.session.rollback()
