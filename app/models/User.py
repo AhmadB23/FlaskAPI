@@ -15,8 +15,6 @@ class User(BaseModel, db.Model):
     city = db.Column(db.String(100), nullable=True)
     phone_number = db.Column(db.String(20), nullable=True)
     date_of_birth = db.Column(db.DateTime, nullable=True)
-    role = db.Column(db.Integer, nullable=False, default=0)  # 0=User, 1=Admin
-    is_active = db.Column(db.Boolean, nullable=False, default=True)
     
     def to_dict(self):
         return {

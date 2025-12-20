@@ -1,5 +1,6 @@
 {
   "info": {
+    "_postman_id": "e29fceed-ad11-4df2-8140-b47885f5dfc5",
     "name": "FlaskAPI Collection",
     "description": "A comprehensive collection for the Flask Bookstore API. This API provides endpoints for user authentication, book management, shopping cart, orders, reviews, and administrative functions.\n\n## Authentication\nMost endpoints require JWT authentication. Use the `/api/v1/auth/login` endpoint to obtain access and refresh tokens.\n\n## Base URL\nSet the `{{base_url}}` variable to your API server address (e.g., `http://localhost:5000`).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -7,29 +8,14 @@
   "item": [
     {
       "name": "Auth",
-      "description": "Authentication endpoints for user registration, login, and profile management",
       "item": [
         {
           "name": "Register",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"username\": \"johndoe\",\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"phone_number\": \"12345678901\",\n  \"address\": \"123 Main St\",\n  \"city\": \"New York\",\n  \"province\": \"NY\"\n}"
-            },
-            "url": "{{base_url}}/api/v1/auth/register",
-            "description": "Register a new user account. Username must be 3-20 alphanumeric characters. Password must be at least 6 characters with at least one letter and one number."
-          },
           "event": [
             {
               "listen": "test",
               "script": {
+                "id": "cac434b7-4040-4838-b3ce-e2eda40f753c",
                 "exec": [
                   "pm.test(\"Status code is 201\", function () {",
                   "    pm.response.to.have.status(201);",
@@ -48,13 +34,25 @@
                   "    pm.expect(jsonData.user).to.have.property('email');",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "1935bbfd-7031-4222-8970-87a50dc291a1",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
-          ]
-        },
-        {
-          "name": "Login",
+          ],
+          "id": "b1a938c3-2804-4eac-a2be-5dfb31e99e90",
           "request": {
             "method": "POST",
             "header": [
@@ -65,11 +63,31 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"password123\"\n}"
+              "raw": "{\n    \"username\": \"anas11\",\n    \"name\": \"anas ali\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"phone_number\": \"12345678901\",\n    \"address\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"province\": \"NY\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": "{{base_url}}/api/v1/auth/login",
-            "description": "Login with username/email and password. Returns access_token and refresh_token for authenticated requests."
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new user account. Username must be 3-20 alphanumeric characters. Password must be at least 6 characters with at least one letter and one number."
           },
+          "response": []
+        },
+        {
+          "name": "Login",
           "event": [
             {
               "listen": "test",
@@ -101,8 +119,36 @@
               }
             }
           ],
+          "id": "7748e7f2-0736-4b27-9794-4cd2aec3f9c5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login with username/email and password. Returns access_token and refresh_token for authenticated requests."
+          },
           "response": [
             {
+              "id": "685036ad-0f3c-40d0-80cf-346d544cfb2c",
               "name": "Login Success",
               "originalRequest": {
                 "method": "POST",
@@ -116,7 +162,18 @@
                   "mode": "raw",
                   "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"password123\"\n}"
                 },
-                "url": "{{base_url}}/api/v1/auth/login"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                }
               },
               "status": "OK",
               "code": 200,
@@ -134,17 +191,6 @@
         },
         {
           "name": "Refresh Token",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{refresh_token}}"
-              }
-            ],
-            "url": "{{base_url}}/api/v1/auth/refresh",
-            "description": "Refresh the access token using a valid refresh token."
-          },
           "event": [
             {
               "listen": "test",
@@ -169,21 +215,34 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Get Current User",
+          ],
+          "id": "07b0b770-4139-45e1-bdaa-71600669cc7a",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{access_token}}"
+                "value": "Bearer {{refresh_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/auth/me",
-            "description": "Get the currently authenticated user's profile information."
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Refresh the access token using a valid refresh token."
           },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
           "event": [
             {
               "listen": "test",
@@ -209,10 +268,35 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "c8e73798-0200-4c76-93bb-143deee61790",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Get the currently authenticated user's profile information."
+          },
+          "response": []
         },
         {
           "name": "Change Password",
+          "id": "55b1642c-5885-4287-9865-d69bb25d3e3b",
           "request": {
             "method": "PUT",
             "header": [
@@ -229,12 +313,25 @@
               "mode": "raw",
               "raw": "{\n  \"old_password\": \"password123\",\n  \"new_password\": \"newpassword456\"\n}"
             },
-            "url": "{{base_url}}/api/v1/auth/change-password",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/change-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "change-password"
+              ]
+            },
             "description": "Change the current user's password. Requires the old password for verification."
-          }
+          },
+          "response": []
         },
         {
           "name": "Update Profile",
+          "id": "699307d6-17d4-4739-9dd1-d632038be02f",
           "request": {
             "method": "PUT",
             "header": [
@@ -251,24 +348,31 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\",\n  \"phone_number\": \"12345678901\",\n  \"address\": \"456 New St\",\n  \"city\": \"Los Angeles\",\n  \"province\": \"CA\"\n}"
             },
-            "url": "{{base_url}}/api/v1/auth/profile",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "profile"
+              ]
+            },
             "description": "Update the current user's profile information."
-          }
+          },
+          "response": []
         }
-      ]
+      ],
+      "id": "7661a393-f655-486f-a49e-bf264cb1f1de",
+      "description": "Authentication endpoints for user registration, login, and profile management"
     },
     {
       "name": "Users",
-      "description": "User management endpoints",
       "item": [
         {
           "name": "Get All Users",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "{{base_url}}/api/v1/users",
-            "description": "Retrieve a list of all users."
-          },
           "event": [
             {
               "listen": "test",
@@ -295,16 +399,28 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Get User by ID",
+          ],
+          "id": "c827ef65-6574-4ca7-bb4b-1a341ea5565e",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{base_url}}/api/v1/users/:user_id",
-            "description": "Get a specific user by their ID."
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            },
+            "description": "Retrieve a list of all users."
           },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
           "event": [
             {
               "listen": "test",
@@ -325,25 +441,34 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "f3dee086-f14c-4e09-be6d-dbeedb9796e1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
+            "description": "Get a specific user by their ID."
+          },
+          "response": []
         },
         {
           "name": "Create User",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"username\": \"newuser\",\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\"\n}"
-            },
-            "url": "{{base_url}}/api/v1/users",
-            "description": "Create a new user."
-          },
           "event": [
             {
               "listen": "test",
@@ -369,8 +494,35 @@
               }
             }
           ],
+          "id": "3a3f80b1-22d4-4d3e-bdbd-da8d482a8b25",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            },
+            "description": "Create a new user."
+          },
           "response": [
             {
+              "id": "0c9e18da-54ec-4573-bc53-7ed9fd03b353",
               "name": "Create User Success",
               "originalRequest": {
                 "method": "POST",
@@ -384,7 +536,17 @@
                   "mode": "raw",
                   "raw": "{\n  \"username\": \"newuser\",\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\"\n}"
                 },
-                "url": "{{base_url}}/api/v1/users"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/users",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users"
+                  ]
+                }
               },
               "status": "Created",
               "code": 201,
@@ -402,21 +564,6 @@
         },
         {
           "name": "Update User",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\"\n}"
-            },
-            "url": "{{base_url}}/api/v1/users/:user_id",
-            "description": "Update an existing user's information."
-          },
           "event": [
             {
               "listen": "test",
@@ -435,16 +582,43 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "ea165ea5-7df7-4700-8579-4efca7b07928",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
+            "description": "Update an existing user's information."
+          },
+          "response": []
         },
         {
           "name": "Delete User",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": "{{base_url}}/api/v1/users/:user_id",
-            "description": "Delete a user by their ID."
-          },
           "event": [
             {
               "listen": "test",
@@ -464,16 +638,77 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "ab2fcda0-381e-4b34-b7b3-214690a3a18e",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
+            "description": "Delete a user by their ID."
+          },
+          "response": []
         }
-      ]
+      ],
+      "id": "89b6beff-6909-4444-a8a8-6a7e5b248a9d",
+      "description": "User management endpoints"
     },
     {
       "name": "Books",
-      "description": "Book management endpoints. Public endpoints for browsing, admin-only for CRUD operations.",
       "item": [
         {
           "name": "Get All Books",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Books have required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0]).to.have.property('id');",
+                  "        pm.expect(jsonData[0]).to.have.property('title');",
+                  "        pm.expect(jsonData[0]).to.have.property('price');",
+                  "        pm.expect(jsonData[0]).to.have.property('isbn');",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Price is a number\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0].price).to.be.a('number');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "d4f35eea-e188-47c2-981b-5487a3124477",
           "request": {
             "method": "GET",
             "header": [],
@@ -512,43 +747,9 @@
             },
             "description": "Get all books with optional filters for category, author, and price range."
           },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response is an array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.be.an('array');",
-                  "});",
-                  "",
-                  "pm.test(\"Books have required fields\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.length > 0) {",
-                  "        pm.expect(jsonData[0]).to.have.property('id');",
-                  "        pm.expect(jsonData[0]).to.have.property('title');",
-                  "        pm.expect(jsonData[0]).to.have.property('price');",
-                  "        pm.expect(jsonData[0]).to.have.property('isbn');",
-                  "    }",
-                  "});",
-                  "",
-                  "pm.test(\"Price is a number\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.length > 0) {",
-                  "        pm.expect(jsonData[0].price).to.be.a('number');",
-                  "    }",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
           "response": [
             {
+              "id": "1e5442c6-abe8-4aca-9b0a-942f9debc31d",
               "name": "Get All Books Success",
               "originalRequest": {
                 "method": "GET",
@@ -581,12 +782,6 @@
         },
         {
           "name": "Get Book by ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "{{base_url}}/api/v1/books/:book_id",
-            "description": "Get detailed information about a specific book."
-          },
           "event": [
             {
               "listen": "test",
@@ -611,13 +806,48 @@
               }
             }
           ],
+          "id": "a5d995ce-366a-49c8-9117-f3871d6ee74f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Get detailed information about a specific book."
+          },
           "response": [
             {
+              "id": "b24ce94f-70ed-4c98-8a65-14d51e926d3b",
               "name": "Get Book by ID Success",
               "originalRequest": {
                 "method": "GET",
                 "header": [],
-                "url": "{{base_url}}/api/v1/books/770e8400-e29b-41d4-a716-446655440002"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/books/770e8400-e29b-41d4-a716-446655440002",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "770e8400-e29b-41d4-a716-446655440002"
+                  ]
+                }
               },
               "status": "OK",
               "code": 200,
@@ -635,25 +865,6 @@
         },
         {
           "name": "Create Book (Admin)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"The Great Book\",\n  \"isbn\": \"978-0-123456-78-9\",\n  \"price\": 29.99,\n  \"stock_quantity\": 100,\n  \"description\": \"An amazing book about programming\",\n  \"author_id\": \"author-uuid-here\",\n  \"category_id\": \"category-uuid-here\"\n}"
-            },
-            "url": "{{base_url}}/api/v1/books",
-            "description": "Create a new book. Requires admin access."
-          },
           "event": [
             {
               "listen": "test",
@@ -679,8 +890,39 @@
               }
             }
           ],
+          "id": "4df945a8-9b12-4469-8dfe-716ebc9f3030",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Great Book\",\n  \"isbn\": \"978-0-123456-78-9\",\n  \"price\": 29.99,\n  \"stock_quantity\": 100,\n  \"description\": \"An amazing book about programming\",\n  \"author_id\": \"author-uuid-here\",\n  \"category_id\": \"category-uuid-here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/books",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books"
+              ]
+            },
+            "description": "Create a new book. Requires admin access."
+          },
           "response": [
             {
+              "id": "498cba62-aa1f-474b-8d16-9629e9834e91",
               "name": "Create Book Success",
               "originalRequest": {
                 "method": "POST",
@@ -698,7 +940,17 @@
                   "mode": "raw",
                   "raw": "{\n  \"title\": \"The Great Book\",\n  \"isbn\": \"978-0-123456-78-9\",\n  \"price\": 29.99,\n  \"stock_quantity\": 100,\n  \"description\": \"An amazing book about programming\",\n  \"author_id\": \"author-uuid-here\",\n  \"category_id\": \"category-uuid-here\"\n}"
                 },
-                "url": "{{base_url}}/api/v1/books"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/books",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books"
+                  ]
+                }
               },
               "status": "Created",
               "code": 201,
@@ -716,25 +968,6 @@
         },
         {
           "name": "Update Book (Admin)",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Updated Book Title\",\n  \"price\": 34.99,\n  \"stock_quantity\": 150\n}"
-            },
-            "url": "{{base_url}}/api/v1/books/:book_id",
-            "description": "Update an existing book. Requires admin access."
-          },
           "event": [
             {
               "listen": "test",
@@ -752,21 +985,47 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Delete Book (Admin)",
+          ],
+          "id": "85bfdc89-4a15-4f7b-81be-331506f8f97e",
           "request": {
-            "method": "DELETE",
+            "method": "PUT",
             "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
               {
                 "key": "Authorization",
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/books/:book_id",
-            "description": "Delete a book. Requires admin access."
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Book Title\",\n  \"price\": 34.99,\n  \"stock_quantity\": 150\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Update an existing book. Requires admin access."
           },
+          "response": []
+        },
+        {
+          "name": "Delete Book (Admin)",
           "event": [
             {
               "listen": "test",
@@ -779,10 +1038,40 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "62251bf3-3ab1-4cdf-904c-e167fe7c683c",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Delete a book. Requires admin access."
+          },
+          "response": []
         },
         {
           "name": "Add Book Review",
+          "id": "209899c9-9268-498a-879f-f349c91491b2",
           "request": {
             "method": "POST",
             "header": [
@@ -799,33 +1088,65 @@
               "mode": "raw",
               "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Excellent book! Highly recommended.\"\n}"
             },
-            "url": "{{base_url}}/api/v1/books/:book_id/reviews",
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id",
+                "reviews"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
             "description": "Add a review to a book. Rating must be between 1 and 5."
-          }
+          },
+          "response": []
         },
         {
           "name": "Get Book Reviews",
+          "id": "37ba94f6-2afb-405a-8459-52aac7ea8abc",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{base_url}}/api/v1/books/:book_id/reviews",
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id",
+                "reviews"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
             "description": "Get all reviews for a specific book."
-          }
+          },
+          "response": []
         }
-      ]
+      ],
+      "id": "64eb0919-86fd-485d-9b87-589b06d6ba9b",
+      "description": "Book management endpoints. Public endpoints for browsing, admin-only for CRUD operations."
     },
     {
       "name": "Authors",
-      "description": "Author management endpoints",
       "item": [
         {
           "name": "Get All Authors",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "{{base_url}}/api/v1/authors",
-            "description": "Get a list of all authors."
-          },
           "event": [
             {
               "listen": "test",
@@ -843,16 +1164,28 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Get Author by ID",
+          ],
+          "id": "fb44b9b7-1acd-48bb-bb1f-0be090cc1595",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{base_url}}/api/v1/authors/:author_id",
-            "description": "Get details of a specific author."
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors"
+              ]
+            },
+            "description": "Get a list of all authors."
           },
+          "response": []
+        },
+        {
+          "name": "Get Author by Name",
           "event": [
             {
               "listen": "test",
@@ -871,10 +1204,109 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "5b673e46-e367-4925-b2a1-703624715ca9",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors/:author_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors",
+                ":author_id"
+              ],
+              "variable": [
+                {
+                  "key": "author_id"
+                }
+              ]
+            },
+            "description": "Get details of a specific author."
+          },
+          "response": []
         },
         {
           "name": "Create Author (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "4b8c67ad-e2fa-42bd-abb7-555b4fc9f88b",
+                "exec": [
+                  "// Visualization Script",
+                  "// Visualization Script",
+                  "const template = `",
+                  "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto;\">",
+                  "    <div style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0;\">",
+                  "        <h2 style=\"margin: 0; font-size: 24px;\">✓ Author Created Successfully</h2>",
+                  "    </div>",
+                  "    <div style=\"background: #f8f9fa; padding: 20px; border: 1px solid #e0e0e0; border-radius: 0 0 8px 8px;\">",
+                  "        <table style=\"width: 100%; border-collapse: collapse;\">",
+                  "            <tr style=\"border-bottom: 1px solid #dee2e6;\">",
+                  "                <td style=\"padding: 12px; font-weight: bold; color: #495057; width: 40%;\">Author ID</td>",
+                  "                <td style=\"padding: 12px; color: #212529;\">{{author.id}}</td>",
+                  "            </tr>",
+                  "            {{#if author.author_name}}",
+                  "            <tr style=\"border-bottom: 1px solid #dee2e6;\">",
+                  "                <td style=\"padding: 12px; font-weight: bold; color: #495057;\">Author Name</td>",
+                  "                <td style=\"padding: 12px; color: #212529;\">{{author.author_name}}</td>",
+                  "            </tr>",
+                  "            {{/if}}",
+                  "            {{#if author.created_at}}",
+                  "            <tr style=\"border-bottom: 1px solid #dee2e6;\">",
+                  "                <td style=\"padding: 12px; font-weight: bold; color: #495057;\">Created At</td>",
+                  "                <td style=\"padding: 12px; color: #212529;\">{{author.created_at}}</td>",
+                  "            </tr>",
+                  "            {{/if}}",
+                  "            {{#if author.message}}",
+                  "            <tr>",
+                  "                <td style=\"padding: 12px; font-weight: bold; color: #495057;\">Message</td>",
+                  "                <td style=\"padding: 12px; color: #28a745;\">{{author.message}}</td>",
+                  "            </tr>",
+                  "            {{/if}}",
+                  "        </table>",
+                  "    </div>",
+                  "</div>",
+                  "`;",
+                  "",
+                  "function createPayload() {",
+                  "    const responseData = pm.response.json();",
+                  "    return {",
+                  "        author: {",
+                  "            id: responseData.id || 'N/A',",
+                  "            author_name: responseData.author_name || responseData.name || null,",
+                  "            created_at: responseData.created_at || null,",
+                  "            message: responseData.message || null",
+                  "        }",
+                  "    };",
+                  "}",
+                  "",
+                  "pm.visualizer.set(template, createPayload());"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "d797c838-381c-46e6-9a8a-2a25d3459431",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "32c4a126-e16f-43c1-be8a-81edca5f5fe1",
           "request": {
             "method": "POST",
             "header": [
@@ -889,32 +1321,39 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"author_name\": \"John Smith\"\n}"
+              "raw": "{\n  \"author_name\": \"Allama Iqbal\"\n}"
             },
-            "url": "{{base_url}}/api/v1/authors",
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors"
+              ]
+            },
             "description": "Create a new author. Requires admin access."
           },
+          "response": []
+        },
+        {
+          "name": "Update Author (Admin)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});",
-                  "",
-                  "pm.test(\"Author created successfully\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
                   "});"
                 ],
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Update Author (Admin)",
+          ],
+          "id": "cdfa7f7d-c871-44f0-8713-565d14b09c6a",
           "request": {
             "method": "PUT",
             "header": [
@@ -931,36 +1370,29 @@
               "mode": "raw",
               "raw": "{\n  \"author_name\": \"John Smith Jr.\"\n}"
             },
-            "url": "{{base_url}}/api/v1/authors/:author_id",
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors/:author_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors",
+                ":author_id"
+              ],
+              "variable": [
+                {
+                  "key": "author_id"
+                }
+              ]
+            },
             "description": "Update an existing author. Requires admin access."
           },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+          "response": []
         },
         {
           "name": "Delete Author (Admin)",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": "{{base_url}}/api/v1/authors/:author_id",
-            "description": "Delete an author. Requires admin access."
-          },
           "event": [
             {
               "listen": "test",
@@ -973,22 +1405,46 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "36a73afb-1235-4cb4-b27e-b42dc104da1e",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors/:author_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors",
+                ":author_id"
+              ],
+              "variable": [
+                {
+                  "key": "author_id"
+                }
+              ]
+            },
+            "description": "Delete an author. Requires admin access."
+          },
+          "response": []
         }
-      ]
+      ],
+      "id": "f78bb42c-bd17-46b4-ad81-8d9b45a01e9c",
+      "description": "Author management endpoints"
     },
     {
       "name": "Categories",
-      "description": "Category management endpoints",
       "item": [
         {
           "name": "Get All Categories",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "{{base_url}}/api/v1/categories",
-            "description": "Get a list of all book categories."
-          },
           "event": [
             {
               "listen": "test",
@@ -1006,16 +1462,28 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Get Category by ID",
+          ],
+          "id": "9cfa48d2-0ff3-4d4f-bf77-f39f40c6e7c6",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{base_url}}/api/v1/categories/:category_id",
-            "description": "Get details of a specific category."
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ]
+            },
+            "description": "Get a list of all book categories."
           },
+          "response": []
+        },
+        {
+          "name": "Get Category by ID",
           "event": [
             {
               "listen": "test",
@@ -1034,29 +1502,34 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "52cf7aca-0ab4-41a7-8439-8d09089c3fc4",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/:category_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":category_id"
+              ],
+              "variable": [
+                {
+                  "key": "category_id"
+                }
+              ]
+            },
+            "description": "Get details of a specific category."
+          },
+          "response": []
         },
         {
           "name": "Create Category (Admin)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"category_type\": \"Fiction\"\n}"
-            },
-            "url": "{{base_url}}/api/v1/categories",
-            "description": "Create a new category. Requires admin access."
-          },
           "event": [
             {
               "listen": "test",
@@ -1074,10 +1547,55 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "9c493ebf-f7fd-466f-bcf8-b755c4792034",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_type\": \"Fiction\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ]
+            },
+            "description": "Create a new category. Requires admin access."
+          },
+          "response": []
         },
         {
           "name": "Update Category (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "705dcf00-9ddd-4f58-b5ca-27d8bd5f3b54",
           "request": {
             "method": "PUT",
             "header": [
@@ -1094,36 +1612,29 @@
               "mode": "raw",
               "raw": "{\n  \"category_type\": \"Science Fiction\"\n}"
             },
-            "url": "{{base_url}}/api/v1/categories/:category_id",
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/:category_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":category_id"
+              ],
+              "variable": [
+                {
+                  "key": "category_id"
+                }
+              ]
+            },
             "description": "Update an existing category. Requires admin access."
           },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+          "response": []
         },
         {
           "name": "Delete Category (Admin)",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": "{{base_url}}/api/v1/categories/:category_id",
-            "description": "Delete a category. Requires admin access."
-          },
           "event": [
             {
               "listen": "test",
@@ -1136,27 +1647,46 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Cart",
-      "description": "Shopping cart management endpoints. All endpoints require authentication.",
-      "item": [
-        {
-          "name": "Get Cart",
+          ],
+          "id": "8283e6ec-af2b-48b2-bfc4-09d6673256c8",
           "request": {
-            "method": "GET",
+            "method": "DELETE",
             "header": [
               {
                 "key": "Authorization",
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/cart",
-            "description": "Get the current user's shopping cart with items and total."
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/:category_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":category_id"
+              ],
+              "variable": [
+                {
+                  "key": "category_id"
+                }
+              ]
+            },
+            "description": "Delete a category. Requires admin access."
           },
+          "response": []
+        }
+      ],
+      "id": "949f11cf-2450-482a-9ded-e1de48966f7c",
+      "description": "Category management endpoints"
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
           "event": [
             {
               "listen": "test",
@@ -1183,8 +1713,31 @@
               }
             }
           ],
+          "id": "2d52c485-f40c-4a09-8587-9e93fb951d2c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
+            "description": "Get the current user's shopping cart with items and total."
+          },
           "response": [
             {
+              "id": "37df9264-06c0-49be-8f7d-b5ed6931a05d",
               "name": "Get Cart Success",
               "originalRequest": {
                 "method": "GET",
@@ -1194,7 +1747,17 @@
                     "value": "Bearer {{access_token}}"
                   }
                 ],
-                "url": "{{base_url}}/api/v1/cart"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/cart",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "cart"
+                  ]
+                }
               },
               "status": "OK",
               "code": 200,
@@ -1212,25 +1775,6 @@
         },
         {
           "name": "Add Item to Cart",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"book_id\": \"book-uuid-here\",\n  \"quantity\": 1\n}"
-            },
-            "url": "{{base_url}}/api/v1/cart/items",
-            "description": "Add a book to the shopping cart."
-          },
           "event": [
             {
               "listen": "test",
@@ -1249,12 +1793,10 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Update Cart Item",
+          ],
+          "id": "9f6f4168-a031-4965-94ea-4575a7d047a3",
           "request": {
-            "method": "PUT",
+            "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
@@ -1267,11 +1809,26 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 2\n}"
+              "raw": "{\n  \"book_id\": \"book-uuid-here\",\n  \"quantity\": 1\n}"
             },
-            "url": "{{base_url}}/api/v1/cart/items/:cart_item_id",
-            "description": "Update the quantity of an item in the cart."
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart/items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items"
+              ]
+            },
+            "description": "Add a book to the shopping cart."
           },
+          "response": []
+        },
+        {
+          "name": "Update Cart Item",
           "event": [
             {
               "listen": "test",
@@ -1289,72 +1846,10 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Remove Item from Cart",
+          ],
+          "id": "b01de3d8-7d4b-4266-9a66-9a3f673a1251",
           "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": "{{base_url}}/api/v1/cart/items/:cart_item_id",
-            "description": "Remove a specific item from the cart."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
-        {
-          "name": "Clear Cart",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": "{{base_url}}/api/v1/cart",
-            "description": "Remove all items from the cart."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Orders",
-      "description": "Order management endpoints",
-      "item": [
-        {
-          "name": "Checkout",
-          "request": {
-            "method": "POST",
+            "method": "PUT",
             "header": [
               {
                 "key": "Content-Type",
@@ -1367,11 +1862,124 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"shipping_address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"phone_number\": \"12345678901\"\n}"
+              "raw": "{\n  \"quantity\": 2\n}"
             },
-            "url": "{{base_url}}/api/v1/orders/checkout",
-            "description": "Create an order from the current cart items."
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart/items/:cart_item_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items",
+                ":cart_item_id"
+              ],
+              "variable": [
+                {
+                  "key": "cart_item_id"
+                }
+              ]
+            },
+            "description": "Update the quantity of an item in the cart."
           },
+          "response": []
+        },
+        {
+          "name": "Remove Item from Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "2934b05d-76b2-430a-997c-32a4d90b56ae",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart/items/:cart_item_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items",
+                ":cart_item_id"
+              ],
+              "variable": [
+                {
+                  "key": "cart_item_id"
+                }
+              ]
+            },
+            "description": "Remove a specific item from the cart."
+          },
+          "response": []
+        },
+        {
+          "name": "Clear Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "f0478462-44e1-4b4b-9b68-e6f855ab9358",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
+            "description": "Remove all items from the cart."
+          },
+          "response": []
+        }
+      ],
+      "id": "fcba2073-0439-4459-88b5-300c9042b795",
+      "description": "Shopping cart management endpoints. All endpoints require authentication."
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Checkout",
           "event": [
             {
               "listen": "test",
@@ -1398,8 +2006,40 @@
               }
             }
           ],
+          "id": "a5bc902b-620d-4e0b-816a-da562a766444",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shipping_address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"phone_number\": \"12345678901\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "checkout"
+              ]
+            },
+            "description": "Create an order from the current cart items."
+          },
           "response": [
             {
+              "id": "fb7284a0-c112-4ba8-a53e-cd5ec9931f2a",
               "name": "Checkout Success",
               "originalRequest": {
                 "method": "POST",
@@ -1417,7 +2057,18 @@
                   "mode": "raw",
                   "raw": "{\n  \"shipping_address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"phone_number\": \"12345678901\"\n}"
                 },
-                "url": "{{base_url}}/api/v1/orders/checkout"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/orders/checkout",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "orders",
+                    "checkout"
+                  ]
+                }
               },
               "status": "Created",
               "code": 201,
@@ -1435,17 +2086,6 @@
         },
         {
           "name": "Get User Orders",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": "{{base_url}}/api/v1/orders",
-            "description": "Get all orders for the current user."
-          },
           "event": [
             {
               "listen": "test",
@@ -1472,10 +2112,34 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "74148abb-8fd6-4b7a-a093-16c5a97fe586",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ]
+            },
+            "description": "Get all orders for the current user."
+          },
+          "response": []
         },
         {
           "name": "Get Recent Orders",
+          "id": "a4015604-1480-48ae-8b3a-09bceac63f9c",
           "request": {
             "method": "GET",
             "header": [
@@ -1504,21 +2168,11 @@
               ]
             },
             "description": "Get recent orders for the current user."
-          }
+          },
+          "response": []
         },
         {
           "name": "Get Order by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": "{{base_url}}/api/v1/orders/:order_id",
-            "description": "Get details of a specific order."
-          },
           "event": [
             {
               "listen": "test",
@@ -1540,8 +2194,37 @@
               }
             }
           ],
+          "id": "b7039306-92b1-49bf-981b-cf739aaee19b",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/:order_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                ":order_id"
+              ],
+              "variable": [
+                {
+                  "key": "order_id"
+                }
+              ]
+            },
+            "description": "Get details of a specific order."
+          },
           "response": [
             {
+              "id": "6407a618-2cec-42f3-a7fd-7ce15886ec8a",
               "name": "Get Order by ID Success",
               "originalRequest": {
                 "method": "GET",
@@ -1551,7 +2234,18 @@
                     "value": "Bearer {{access_token}}"
                   }
                 ],
-                "url": "{{base_url}}/api/v1/orders/cc0e8400-e29b-41d4-a716-446655440030"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/orders/cc0e8400-e29b-41d4-a716-446655440030",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "orders",
+                    "cc0e8400-e29b-41d4-a716-446655440030"
+                  ]
+                }
               },
               "status": "OK",
               "code": 200,
@@ -1569,17 +2263,6 @@
         },
         {
           "name": "Cancel Order",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": "{{base_url}}/api/v1/orders/:order_id/cancel",
-            "description": "Cancel an order."
-          },
           "event": [
             {
               "listen": "test",
@@ -1598,10 +2281,41 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "f93100f3-8484-41f4-aa6f-7ed8042564a0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/:order_id/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                ":order_id",
+                "cancel"
+              ],
+              "variable": [
+                {
+                  "key": "order_id"
+                }
+              ]
+            },
+            "description": "Cancel an order."
+          },
+          "response": []
         },
         {
           "name": "Get All Orders (Admin)",
+          "id": "9597cdf5-516b-4f48-889c-d4bb90b9e92d",
           "request": {
             "method": "GET",
             "header": [
@@ -1630,29 +2344,11 @@
               ]
             },
             "description": "Get all orders. Requires admin access."
-          }
+          },
+          "response": []
         },
         {
           "name": "Update Order Status (Admin)",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"shipped\"\n}"
-            },
-            "url": "{{base_url}}/api/v1/admin/orders/:order_id/status",
-            "description": "Update the status of an order. Requires admin access."
-          },
           "event": [
             {
               "listen": "test",
@@ -1670,10 +2366,50 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "8b8e7bac-77d5-4e3d-830c-3e1b39bbe77f",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"shipped\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/orders/:order_id/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders",
+                ":order_id",
+                "status"
+              ],
+              "variable": [
+                {
+                  "key": "order_id"
+                }
+              ]
+            },
+            "description": "Update the status of an order. Requires admin access."
+          },
+          "response": []
         },
         {
           "name": "Update Tracking Number (Admin)",
+          "id": "7f983595-f6be-470b-9234-8817b2c051b7",
           "request": {
             "method": "PUT",
             "header": [
@@ -1690,24 +2426,38 @@
               "mode": "raw",
               "raw": "{\n  \"tracking_number\": \"TRACK123456789\"\n}"
             },
-            "url": "{{base_url}}/api/v1/admin/orders/:order_id/tracking",
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/orders/:order_id/tracking",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders",
+                ":order_id",
+                "tracking"
+              ],
+              "variable": [
+                {
+                  "key": "order_id"
+                }
+              ]
+            },
             "description": "Update the tracking number for an order. Requires admin access."
-          }
+          },
+          "response": []
         }
-      ]
+      ],
+      "id": "338af96a-0db3-43e6-aa79-bafdb0027bd6",
+      "description": "Order management endpoints"
     },
     {
       "name": "Reviews",
-      "description": "Review management endpoints",
       "item": [
         {
           "name": "Get All Reviews",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "{{base_url}}/api/v1/reviews/",
-            "description": "Get all reviews."
-          },
           "event": [
             {
               "listen": "test",
@@ -1725,25 +2475,56 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "0b0695ef-2058-412e-a836-2e212976a71d",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ""
+              ]
+            },
+            "description": "Get all reviews."
+          },
+          "response": []
         },
         {
           "name": "Get Review by ID",
+          "id": "7324df31-68ab-4bce-8441-3fad13485161",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{base_url}}/api/v1/reviews/:review_id",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/:review_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ":review_id"
+              ],
+              "variable": [
+                {
+                  "key": "review_id"
+                }
+              ]
+            },
             "description": "Get a specific review by ID."
-          }
+          },
+          "response": []
         },
         {
           "name": "Get Reviews by Book",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "{{base_url}}/api/v1/reviews/book/:book_id",
-            "description": "Get all reviews for a specific book."
-          },
           "event": [
             {
               "listen": "test",
@@ -1772,13 +2553,50 @@
               }
             }
           ],
+          "id": "6a166a98-344e-49e8-b0c3-fbb2b12c0816",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/book/:book_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "book",
+                ":book_id"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Get all reviews for a specific book."
+          },
           "response": [
             {
+              "id": "ecccd7fd-f6af-476f-971a-29e68fcb7cb0",
               "name": "Get Reviews by Book Success",
               "originalRequest": {
                 "method": "GET",
                 "header": [],
-                "url": "{{base_url}}/api/v1/reviews/book/770e8400-e29b-41d4-a716-446655440002"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/reviews/book/770e8400-e29b-41d4-a716-446655440002",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "reviews",
+                    "book",
+                    "770e8400-e29b-41d4-a716-446655440002"
+                  ]
+                }
               },
               "status": "OK",
               "code": 200,
@@ -1796,15 +2614,36 @@
         },
         {
           "name": "Get Book Rating Summary",
+          "id": "91ef8a25-e57f-4e65-82d7-1f1c5be87dfe",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{base_url}}/api/v1/reviews/book/:book_id/summary",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/book/:book_id/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "book",
+                ":book_id",
+                "summary"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
             "description": "Get rating summary for a book."
-          }
+          },
+          "response": []
         },
         {
           "name": "Get User Reviews",
+          "id": "acfa1714-585d-4706-82f9-f726bebf97ed",
           "request": {
             "method": "GET",
             "header": [
@@ -1813,31 +2652,30 @@
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/reviews/user/:user_id",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/user/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "user",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
             "description": "Get all reviews by a user. Users can only view their own reviews unless admin."
-          }
+          },
+          "response": []
         },
         {
           "name": "Create Review",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"book_id\": \"book-uuid-here\",\n  \"rating\": 5,\n  \"comment\": \"Great book!\"\n}"
-            },
-            "url": "{{base_url}}/api/v1/reviews/",
-            "description": "Create a new review for a book."
-          },
           "event": [
             {
               "listen": "test",
@@ -1858,8 +2696,40 @@
               }
             }
           ],
+          "id": "7f14ed72-0aa5-459c-9109-6bce85896dd7",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"book_id\": \"book-uuid-here\",\n  \"rating\": 5,\n  \"comment\": \"Great book!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ""
+              ]
+            },
+            "description": "Create a new review for a book."
+          },
           "response": [
             {
+              "id": "11f68ff0-69e7-4315-9d6b-e2e37ee7de10",
               "name": "Create Review Success",
               "originalRequest": {
                 "method": "POST",
@@ -1877,7 +2747,18 @@
                   "mode": "raw",
                   "raw": "{\n  \"book_id\": \"book-uuid-here\",\n  \"rating\": 5,\n  \"comment\": \"Great book!\"\n}"
                 },
-                "url": "{{base_url}}/api/v1/reviews/"
+                "url": {
+                  "raw": "{{base_url}}/api/v1/reviews/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "reviews",
+                    ""
+                  ]
+                }
               },
               "status": "Created",
               "code": 201,
@@ -1895,25 +2776,6 @@
         },
         {
           "name": "Update Review",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated review comment\"\n}"
-            },
-            "url": "{{base_url}}/api/v1/reviews/:review_id",
-            "description": "Update an existing review. Users can only update their own reviews."
-          },
           "event": [
             {
               "listen": "test",
@@ -1931,21 +2793,47 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        },
-        {
-          "name": "Delete Review",
+          ],
+          "id": "5a3e52a5-2d10-447c-9a22-2325c6b25eb3",
           "request": {
-            "method": "DELETE",
+            "method": "PUT",
             "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
               {
                 "key": "Authorization",
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/reviews/:review_id",
-            "description": "Delete a review. Users can only delete their own reviews unless admin."
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated review comment\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/:review_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ":review_id"
+              ],
+              "variable": [
+                {
+                  "key": "review_id"
+                }
+              ]
+            },
+            "description": "Update an existing review. Users can only update their own reviews."
           },
+          "response": []
+        },
+        {
+          "name": "Delete Review",
           "event": [
             {
               "listen": "test",
@@ -1958,16 +2846,47 @@
                 "type": "text/javascript"
               }
             }
-          ]
+          ],
+          "id": "c4c1ceac-5c4c-4932-886d-798c43e69bf5",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/:review_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ":review_id"
+              ],
+              "variable": [
+                {
+                  "key": "review_id"
+                }
+              ]
+            },
+            "description": "Delete a review. Users can only delete their own reviews unless admin."
+          },
+          "response": []
         }
-      ]
+      ],
+      "id": "cdebdaef-8f6f-4aec-a64e-c4544fad4d9e",
+      "description": "Review management endpoints"
     },
     {
       "name": "Cart History",
-      "description": "Cart history tracking endpoints",
       "item": [
         {
           "name": "Get All Cart History (Admin)",
+          "id": "8de50b33-68f2-4548-a11b-1ebb1362349c",
           "request": {
             "method": "GET",
             "header": [
@@ -1976,12 +2895,25 @@
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/cart-history/",
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart-history/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart-history",
+                ""
+              ]
+            },
             "description": "Get all cart history records. Requires admin access."
-          }
+          },
+          "response": []
         },
         {
           "name": "Get Cart History by ID",
+          "id": "b2f76341-a910-4e07-a89e-1de81f6525f6",
           "request": {
             "method": "GET",
             "header": [
@@ -1990,12 +2922,30 @@
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/cart-history/:cart_history_id",
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart-history/:cart_history_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart-history",
+                ":cart_history_id"
+              ],
+              "variable": [
+                {
+                  "key": "cart_history_id"
+                }
+              ]
+            },
             "description": "Get a specific cart history record."
-          }
+          },
+          "response": []
         },
         {
           "name": "Get User Cart History",
+          "id": "33729f74-07f1-4de3-abfc-ca7ecf0e7c58",
           "request": {
             "method": "GET",
             "header": [
@@ -2004,12 +2954,31 @@
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/cart-history/user/:user_id",
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart-history/user/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart-history",
+                "user",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
             "description": "Get cart history for a specific user."
-          }
+          },
+          "response": []
         },
         {
           "name": "Get Order Item History (Admin)",
+          "id": "c849156e-b044-4d9c-9fb9-83d8bc7b7ed5",
           "request": {
             "method": "GET",
             "header": [
@@ -2018,11 +2987,31 @@
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "{{base_url}}/api/v1/cart-history/order-item/:order_item_id",
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart-history/order-item/:order_item_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart-history",
+                "order-item",
+                ":order_item_id"
+              ],
+              "variable": [
+                {
+                  "key": "order_item_id"
+                }
+              ]
+            },
             "description": "Get cart history for an order item. Requires admin access."
-          }
+          },
+          "response": []
         }
-      ]
+      ],
+      "id": "7ecaeea7-529a-4bb3-8505-c4cb2e4a0723",
+      "description": "Cart history tracking endpoints"
     }
   ],
   "event": [
@@ -2072,31 +3061,37 @@
   ],
   "variable": [
     {
+      "id": "b7e29ba9-93fe-4655-92aa-869601870af3",
       "key": "base_url",
       "value": "http://localhost:5000",
       "type": "string"
     },
     {
+      "id": "34bebd71-b1c1-431c-90cf-92f302c428f6",
       "key": "access_token",
       "value": "",
       "type": "string"
     },
     {
+      "id": "d27ff6d7-610d-4a51-9fdb-0a5a596a7103",
       "key": "refresh_token",
       "value": "",
       "type": "string"
     },
     {
+      "id": "0bc612ed-5840-475c-9005-a5bbe009b997",
       "key": "created_user_id",
       "value": "",
       "type": "string"
     },
     {
+      "id": "086da825-2c4d-41bf-a9fe-18d55edbd7ca",
       "key": "created_book_id",
       "value": "",
       "type": "string"
     },
     {
+      "id": "db1993fe-820a-4e3c-a107-236aff1bcc8c",
       "key": "created_order_id",
       "value": "",
       "type": "string"

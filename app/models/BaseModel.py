@@ -11,8 +11,8 @@ class BaseModel:
     is_deleted = db.Column(db.Boolean, nullable=False, default=False)
     deleted_at = db.Column(db.DateTime, nullable=True)
     created_by = db.Column(db.String(255), nullable=True, default='')
-    role = db.Column(db.Integer, nullable=True)
-    is_active = db.Column(db.Integer, nullable=True)
+    role = db.Column(db.Integer, nullable=False, default=0)  # 0=User, 1=Admin
+    is_active = db.Column(db.Integer, nullable=False, default=1)  # 1=Active, 0=Inactive
     
     def base_to_dict(self):
         """Returns base fields as dictionary"""

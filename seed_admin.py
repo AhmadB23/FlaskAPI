@@ -16,7 +16,7 @@ def create_admin():
         existing_admin = User.query.filter_by(email='admin@bookstore.com').first()
         
         if existing_admin:
-            print("❌ Admin user already exists!")
+            print("[WARNING] Admin user already exists!")
             print(f"   Email: admin@bookstore.com")
             return
         
