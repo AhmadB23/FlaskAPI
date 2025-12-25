@@ -12,8 +12,9 @@ def get_books():
 # GET book by ID
 @book_bp.route('/books/<book_id>', methods=['GET'])
 def get_book(book_id):
-    """Get book by ID - Not implemented"""
+
     return jsonify({'message': 'Book module not implemented'}), 501
+    
 
 # POST create book (Admin only)
 @book_bp.route('/books', methods=['POST'])

@@ -47,7 +47,7 @@ def clear_cart():
 # DELETE clear entire cart
 @cart_bp.route('/cart', methods=['DELETE'])
 @jwt_required()
-def clear_cart():
+def clear_entire_cart():
     """Clear all items from cart"""
     current_user_id = get_jwt_identity()
     CartService.clear_cart(current_user_id)
