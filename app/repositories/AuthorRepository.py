@@ -1,6 +1,7 @@
 from app.models import Author, db
 from typing import List, Optional, Dict
 from datetime import datetime, timezone
+from app.utils import enums
 
 class AuthorRepository:
     """Repository for Author database operations"""
@@ -16,13 +17,16 @@ class AuthorRepository:
         """Get author by ID"""
         return Author.query.filter_by(id=author_id, is_deleted=False).first()
     
-    def get_all(self) -> List[Author]:
+    def get_all_authors(self) -> List[Author]:
         """Get all authors"""
         return Author.query.filter_by(is_deleted=False).order_by(Author.author_name).all()
     
-    def get_by_name(self, author_name: str) -> Optional[Author]:
+    def get_author_by_name(self, author_name: str) -> Optional[Author]:
         """Get author by exact name"""
-        return Author.query.filter_by(author_name=author_name, is_deleted=False).first()
+        return Author.query.filter(
+            Author.author_name.ilike(author_name),
+            Author.is_deleted == False
+        ).first()
     
     def search_by_name(self, name: str) -> List[Author]:
         """Search authors by name (partial match)"""
@@ -43,10 +47,16 @@ class AuthorRepository:
         
         author.updated_at = datetime.now(timezone.utc)
         db.session.flush()
+        db.session.commit()
         return author
     
-    def delete(self, author: Author) -> None:
+    def has_books(self, author: Author) -> bool:
+        """Check if author has associated books"""
+        return len(author.books) > 0
+    
+    def delete_author(self, author: Author) -> None:
         """Soft delete author"""
+        author.is_active = enums.UserStatus.isInactive
         author.is_deleted = True
         author.deleted_at = datetime.now(timezone.utc)
         db.session.flush()

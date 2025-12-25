@@ -2,6 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
 from config.development import DevelopmentConfig
 from app.models import db
 
@@ -18,6 +19,17 @@ def create_app(config_class=DevelopmentConfig):
     jwt.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
+    
+    # Enable CORS for frontend
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:8000", "http://127.0.0.1:8000", "http://localhost:5500", "http://127.0.0.1:5500"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "expose_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True
+        }
+    })
     
     # Register blueprints with API versioning
     from app.routes.itemRoutes import items_bp

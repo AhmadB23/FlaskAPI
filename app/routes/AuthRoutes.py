@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from app.models import User, db
+from app.utils.enums import enums
 from app import bcrypt
 import re
 
@@ -60,12 +61,13 @@ def register():
             name=data.get('name', ''),
             email=data['email'],
             password=hashed_password,
-            role=data.get('role', 0),
+            role=int(data.get('role', enums.UserRole.isUser)),
             phone_number=data.get('phone_number'),
             address=data.get('address'),
             city=data.get('city'),
             province=data.get('province')
         )
+        
         
         db.session.add(new_user)
         db.session.commit()

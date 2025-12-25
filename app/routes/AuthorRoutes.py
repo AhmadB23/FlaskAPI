@@ -11,7 +11,6 @@ author_service = AuthorService()
 def get_authors():
     """Get all authors"""
     try:
-        # Check for search query parameter
         search = request.args.get('search')
         if search:
             authors = author_service.search_authors(search)
@@ -31,12 +30,14 @@ def get_authors():
             'message': 'Failed to retrieve authors'
         }), 500
 
-# GET /authors/<author_id> - Get author by ID
-@author_bp.route('/authors/<author_id>', methods=['GET'])
-def get_author(author_id):
-    """Get author by ID"""
+# GET /authors/name/<author_name> - Get author by name
+@author_bp.route('/authors/name/<author_name>', methods=['GET'])
+def get_author(author_name):
+    """Get author by name"""
     try:
-        author = author_service.get_author_by_id(author_id)
+        print(f"DEBUG: Received author_name parameter: '{author_name}'")
+        author = author_service.get_author_by_name(author_name)
+        print(f"DEBUG: Author result: {author}")
         if not author:
             return jsonify({
                 'success': False,
@@ -97,10 +98,10 @@ def create_author():
             'message': 'Failed to create author'
         }), 500
 
-# PUT /authors/<author_id> - Update author (Admin only)
-@author_bp.route('/authors/<author_id>', methods=['PUT'])
+# PUT /authors/<author_name> - Update author (Admin only)
+@author_bp.route('/authors/<author_name>', methods=['PUT'])
 @jwt_required()
-def update_author(author_id):
+def update_author(author_name):
     """Update author - Admin only"""
     try:
         if not is_admin():
@@ -111,7 +112,7 @@ def update_author(author_id):
             }), 403
         
         data = request.get_json()
-        author = author_service.update_author(author_id, data)
+        author = author_service.update_author(author_name, data)
         
         if not author:
             return jsonify({
@@ -139,11 +140,11 @@ def update_author(author_id):
             'message': 'Failed to update author'
         }), 500
 
-# DELETE /authors/<author_id> - Delete author (Admin only)
-@author_bp.route('/authors/<author_id>', methods=['DELETE'])
+# DELETE /authors/name/<author_name> - Delete author by name (Admin only)
+@author_bp.route('/authors/name/<author_name>', methods=['DELETE'])
 @jwt_required()
-def delete_author(author_id):
-    """Delete author - Admin only"""
+def delete_author(author_name):
+    """Delete author by name - Admin only"""
     try:
         if not is_admin():
             return jsonify({
@@ -152,7 +153,14 @@ def delete_author(author_id):
                 'message': 'Permission denied'
             }), 403
         
-        success = author_service.delete_author(author_id)
+        if not author_name:
+            return jsonify({
+                'success': False,
+                'error': 'Author name is required',
+                'message': 'Missing required field'
+            }), 400
+            
+        success = author_service.delete_author(author_name)
         if not success:
             return jsonify({
                 'success': False,

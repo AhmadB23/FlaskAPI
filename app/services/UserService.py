@@ -1,6 +1,6 @@
 from app.models import User, db
 from app import bcrypt
-from datetime import datetime
+from datetime import datetime, timezone
 
 class UserService:
     
@@ -55,6 +55,6 @@ class UserService:
         if not user:
             return False
         
-        user.deleted_at = datetime.utcnow()  # Soft delete
+        user.deleted_at = datetime.now(timezone.utc)
         db.session.commit()
         return True

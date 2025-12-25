@@ -11,7 +11,7 @@ class ReviewRepository:
         """Create a new review"""
         review = Review(**review_data)
         db.session.add(review)
-        db.session.commit()
+        db.session.flush()
         return review
     
     @staticmethod
@@ -50,7 +50,7 @@ class ReviewRepository:
             if hasattr(review, key) and key not in ['id', 'user_id', 'book_id']:
                 setattr(review, key, value)
         review.updated_at = datetime.now(timezone.utc)
-        db.session.commit()
+        db.session.flush()
         return review
     
     @staticmethod
@@ -58,4 +58,4 @@ class ReviewRepository:
         """Soft delete review"""
         review.is_deleted = True
         review.deleted_at = datetime.now(timezone.utc)
-        db.session.commit()
+        db.session.flush()

@@ -33,6 +33,8 @@ class ReviewService:
         }
         
         review = self.review_repository.create(review_data)
+        from app.models import db
+        db.session.commit()
         return review.to_dict()
     
     def get_review(self, review_id: str) -> Optional[Dict]:
@@ -95,6 +97,8 @@ class ReviewService:
             raise ValueError("Rating must be between 1 and 5")
         
         updated_review = self.review_repository.update(review, update_data)
+        from app.models import db
+        db.session.commit()
         return updated_review.to_dict()
     
     def delete_review(self, review_id: str, user_id: str, is_admin: bool = False) -> bool:
@@ -108,4 +112,6 @@ class ReviewService:
             raise PermissionError("You can only delete your own reviews")
         
         self.review_repository.delete(review)
+        from app.models import db
+        db.session.commit()
         return True
