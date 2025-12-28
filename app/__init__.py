@@ -22,9 +22,12 @@ def create_app(config_class=DevelopmentConfig):
     bcrypt.init_app(app)
     
     # Enable CORS for frontend
+    allowed_origins = os.environ.get('ALLOWED_ORIGINS', 
+                                     'http://localhost:5000,http://127.0.0.1:5000,http://localhost:8000,http://127.0.0.1:8000,http://localhost:5500,http://127.0.0.1:5500')
+    
     CORS(app, resources={
         r"/api/*": {
-            "origins": ["http://localhost:5000", "http://127.0.0.1:5000", "http://localhost:8000", "http://127.0.0.1:8000", "http://localhost:5500", "http://127.0.0.1:5500"],
+            "origins": allowed_origins.split(','),
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "expose_headers": ["Content-Type", "Authorization"],
