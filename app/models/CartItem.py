@@ -15,10 +15,26 @@ class CartItem(BaseModel, db.Model):
     book = db.relationship('Book', backref='cart_items', lazy=True)
     user = db.relationship('User', backref='cart_items', lazy=True)
     
-    def to_dict(self):
-        return {
+    def to_dict(self, include_book=False, include_user=False):
+        """Convert cart item to dictionary"""
+        
+        result = {
             **self.base_to_dict(),
             'quantity': self.quantity,
             'book_id': self.book_id,
             'user_id': self.user_id,
         }
+        
+        if include_book and self.book:
+            result['book'] = self.book.to_dict()
+            result['subtotal'] = float(self.book.price) * self.quantity if self.book.price else 0
+        
+        if include_user and self.user:
+            result['user'] = {
+                'id': self.user.id,
+                'username': self.user.username,
+                'name': self.user.name,
+                'email': self.user.email
+            }
+        
+        return result

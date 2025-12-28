@@ -184,7 +184,7 @@ async function getCart() {
  * Add to cart
  */
 async function addToCart(bookId, quantity = 1) {
-    return await apiPost(ENDPOINTS.CART, { book_id: bookId, quantity }, true);
+    return await apiPost(ENDPOINTS.CART_ADD, { book_id: bookId, quantity }, true);
 }
 
 /**
@@ -205,7 +205,7 @@ async function removeFromCart(itemId) {
  * Place order
  */
 async function placeOrder(orderData) {
-    return await apiPost(ENDPOINTS.ORDERS, orderData, true);
+    return await apiPost(ENDPOINTS.ORDER_CHECKOUT, orderData, true);
 }
 
 /**

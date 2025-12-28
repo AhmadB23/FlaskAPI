@@ -1336,7 +1336,84 @@
             },
             "description": "Create a new author. Requires admin access."
           },
-          "response": []
+          "response": [
+            {
+              "id": "9849d2e8-2db5-48a5-9e38-5482c2716e59",
+              "name": "Create Author (Admin)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"author_name\": \"Anas Ali\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/authors",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "authors"
+                  ]
+                }
+              },
+              "status": "CREATED",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.4 Python/3.13.1"
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 26 Dec 2025 16:41:09 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "295"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "http://127.0.0.1:5500"
+                },
+                {
+                  "key": "Access-Control-Expose-Headers",
+                  "value": "Authorization, Content-Type"
+                },
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "responseTime": "2025-12-26T16:41:37.211Z",
+              "body": "{\n    \"data\": {\n        \"author_name\": \"Anas Ali\",\n        \"created_at\": \"2025-12-26T21:41:09.006462\",\n        \"created_by\": \"\",\n        \"deleted_at\": null,\n        \"id\": \"5ed717fc-48c0-476c-a2a7-59f3d023e673\",\n        \"is_active\": 1,\n        \"is_deleted\": false,\n        \"role\": 0,\n        \"updated_at\": \"2025-12-26T21:41:09.006472\"\n    },\n    \"message\": \"Author created successfully\",\n    \"success\": true\n}"
+            }
+          ]
         },
         {
           "name": "Update Author (Admin)",

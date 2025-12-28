@@ -95,6 +95,9 @@ function updateNavbar() {
     const authLinks = document.getElementById('auth-links');
     const cartBadge = document.getElementById('cart-badge');
     
+    // Check if elements exist (some pages may not have navbar)
+    if (!authLinks) return;
+    
     if (isLoggedIn()) {
         const user = getUserData();
         authLinks.innerHTML = `
@@ -141,10 +144,10 @@ async function updateCartBadge() {
     if (!isLoggedIn()) return;
     
     try {
-        const response = await apiGet(ENDPOINTS.CART);
+        const response = await apiGet(ENDPOINTS.CART, true);
         const cartBadge = document.getElementById('cart-badge');
-        if (cartBadge && response.items) {
-            const totalItems = response.items.reduce((sum, item) => sum + item.quantity, 0);
+        if (cartBadge && response.cart) {
+            const totalItems = response.cart.reduce((sum, item) => sum + item.quantity, 0);
             cartBadge.textContent = totalItems;
         }
     } catch (error) {

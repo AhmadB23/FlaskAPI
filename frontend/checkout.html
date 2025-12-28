@@ -194,26 +194,34 @@
         // Load cart summary
         async function loadCartSummary() {
             try {
-                cartData = await getCart();
+                const response = await getCart();
+                const items = response.cart || [];
                 
-                if (!cartData.items || cartData.items.length === 0) {
+                if (!items || items.length === 0) {
                     showToast('Your cart is empty', 'warning');
                     setTimeout(() => redirectTo('cart.html'), 1500);
                     return;
                 }
                 
+                // Calculate totals
+                const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+                const tax = subtotal * 0.0; // No tax for now
+                const total = subtotal + tax;
+                
+                cartData = { items, subtotal, tax, total };
+                
                 // Display order items
-                document.getElementById('orderItems').innerHTML = cartData.items.map(item => `
+                document.getElementById('orderItems').innerHTML = items.map(item => `
                     <div class="d-flex justify-content-between mb-2">
-                        <span>${item.book_title} (x${item.quantity})</span>
+                        <span>${item.book?.title || 'Unknown'} (x${item.quantity})</span>
                         <span>${formatCurrency(item.subtotal)}</span>
                     </div>
                 `).join('');
                 
                 // Update summary
-                document.getElementById('subtotal').textContent = formatCurrency(cartData.subtotal);
-                document.getElementById('tax').textContent = formatCurrency(cartData.tax);
-                document.getElementById('total').textContent = formatCurrency(cartData.total);
+                document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+                document.getElementById('tax').textContent = formatCurrency(tax);
+                document.getElementById('total').textContent = formatCurrency(total);
                 
                 // Pre-fill user data if available
                 const user = getUserData();
@@ -254,7 +262,7 @@
             const orderData = {
                 name: document.getElementById('name').value,
                 phone_number: document.getElementById('phone_number').value,
-                address: document.getElementById('address').value,
+                shipping_address: document.getElementById('address').value,
                 city: document.getElementById('city').value,
                 province: document.getElementById('province').value,
                 notes: document.getElementById('notes').value || null

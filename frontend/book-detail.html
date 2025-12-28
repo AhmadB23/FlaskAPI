@@ -81,7 +81,8 @@
             showLoading('bookDetail');
             
             try {
-                const book = await getBookById(bookId);
+                const response = await getBookById(bookId);
+                const book = response.book;
                 
                 container.innerHTML = `
                     <div class="row">
@@ -91,16 +92,15 @@
                         </div>
                         <div class="col-md-8">
                             <h1 class="mb-3">${book.title}</h1>
-                            <p class="lead text-muted">by ${book.author_name || 'Unknown Author'}</p>
+                            <p class="lead text-muted">by ${book.author?.name || 'Unknown Author'}</p>
                             
-                            <div class="mb-3">
-                                ${renderStars(book.average_rating || 0)}
+                            <div class="mb-3">\n                                ${renderStars(book.average_rating || 0)}
                                 <span class="ms-2">${(book.average_rating || 0).toFixed(1)} / 5.0</span>
                                 <span class="text-muted ms-2">(${book.review_count || 0} reviews)</span>
                             </div>
                             
                             <div class="mb-3">
-                                <span class="badge bg-secondary">${book.category_name || 'Uncategorized'}</span>
+                                <span class="badge bg-secondary">${book.category?.name || 'Uncategorized'}</span>
                                 ${book.stock_quantity > 0 ? 
                                     `<span class="badge bg-success">In Stock (${book.stock_quantity})</span>` :
                                     `<span class="badge bg-danger">Out of Stock</span>`
