@@ -197,4 +197,7 @@ class OrderService:
         """Convert order to dict with summary info"""
         order_dict = order.to_dict()
         order_dict['item_count'] = order.item_count
+        # Add user name for admin dashboard
+        if order.user:
+            order_dict['user_name'] = order.user.name
         return order_dict

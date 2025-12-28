@@ -427,7 +427,7 @@
                 
                 // Calculate revenue (only delivered orders)
                 const deliveredOrders = orders.filter(order => order.order_status === 'Delivered');
-                const revenue = deliveredOrders.reduce((sum, order) => sum + (parseFloat(order.total_amount) || 0), 0);
+                const revenue = deliveredOrders.reduce((sum, order) => sum + (parseFloat(order.total_price || order.total_amount) || 0), 0);
                 document.getElementById('totalRevenue').textContent = formatCurrency(revenue);
                 
             } catch (error) {
@@ -441,6 +441,8 @@
             
             try {
                 const response = await apiGet(ENDPOINTS.ADMIN_ORDERS, true);
+                console.log('Orders API Response:', response);
+                
                 allOrders = response.data || [];
                 
                 if (allOrders.length === 0) {
@@ -467,7 +469,7 @@
                                         <td>#${order.id.substring(0, 8)}</td>
                                         <td>${order.user_name || 'N/A'}</td>
                                         <td>${formatDate(order.order_date || order.created_at)}</td>
-                                        <td>${formatCurrency(order.total_amount)}</td>
+                                        <td>${formatCurrency(order.total_price || order.total_amount || 0)}</td>
                                         <td>
                                             <span class="badge bg-${getStatusColor(order.order_status)}">
                                                 ${order.order_status}
@@ -485,8 +487,11 @@
                     </div>
                 `;
             } catch (error) {
-                container.innerHTML = '<div class="alert alert-danger">Error loading orders</div>';
                 console.error('Error loading orders:', error);
+                container.innerHTML = `<div class="alert alert-danger">
+                    <strong>Error loading orders:</strong> ${error.message || 'Unknown error'}
+                    <br><small>Check console for details</small>
+                </div>`;
             }
         }
 
