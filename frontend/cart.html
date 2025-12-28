@@ -113,9 +113,11 @@
             showLoading('cartItems');
             
             try {
-                cartData = await getCart();
+                const response = await getCart();
+                const items = response.cart || [];
+                cartData = items;
                 
-                if (!cartData.items || cartData.items.length === 0) {
+                if (!items || items.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-shopping-cart"></i>
@@ -129,17 +131,22 @@
                     return;
                 }
                 
-                container.innerHTML = cartData.items.map(item => `
+                // Calculate totals
+                const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+                const tax = subtotal * 0.0; // No tax for now
+                const total = subtotal + tax;
+                
+                container.innerHTML = items.map(item => `
                     <div class="cart-item">
                         <div class="row align-items-center">
                             <div class="col-md-2">
-                                <img src="${item.book_image_url || 'assets/images/placeholder-book.svg'}" 
-                                     alt="${item.book_title}">
+                                <img src="${item.book?.image_url || 'assets/images/placeholder-book.svg'}" 
+                                     alt="${item.book?.title || 'Book'}">
                             </div>
                             <div class="col-md-4">
-                                <h5 class="cart-item-title">${item.book_title}</h5>
-                                <p class="cart-item-author">${item.book_author || 'Unknown Author'}</p>
-                                <span class="text-price">${formatCurrency(item.price)}</span>
+                                <h5 class="cart-item-title">${item.book?.title || 'Unknown Title'}</h5>
+                                <p class="cart-item-author">${item.book?.author?.name || 'Unknown Author'}</p>
+                                <span class="text-price">${formatCurrency(item.book?.price || 0)}</span>
                             </div>
                             <div class="col-md-3">
                                 <div class="quantity-controls">
@@ -160,7 +167,7 @@
                     </div>
                 `).join('');
                 
-                updateSummary(cartData.subtotal, cartData.tax, cartData.total);
+                updateSummary(subtotal, tax, total);
                 updateCartBadge();
                 
             } catch (error) {
@@ -182,6 +189,7 @@
                 await updateCartItem(itemId, newQuantity);
                 showToast('Cart updated', 'success');
                 loadCart();
+                updateCartBadge();
             } catch (error) {
                 showToast(error.message || 'Failed to update cart', 'danger');
             }
@@ -195,6 +203,7 @@
                 await removeFromCart(itemId);
                 showToast('Item removed from cart', 'success');
                 loadCart();
+                updateCartBadge();
             } catch (error) {
                 showToast(error.message || 'Failed to remove item', 'danger');
             }

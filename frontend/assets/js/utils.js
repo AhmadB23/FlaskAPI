@@ -1,10 +1,11 @@
 // Utility Functions
 
 /**
- * Format currency
+ * Format currency in PKR
  */
 function formatCurrency(amount) {
-    return `$${parseFloat(amount).toFixed(2)}`;
+    const num = parseFloat(amount);
+    return `PKR ${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 /**

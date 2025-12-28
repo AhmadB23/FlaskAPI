@@ -28,34 +28,27 @@ def register():
     try:
         data = request.get_json()
         
-        # Validate required fields
         if not data.get('username') or not data.get('email') or not data.get('password'):
             return jsonify({'error': 'Username, email, and password are required'}), 400
         
-        # Validate username (alphanumeric, 3-20 chars)
         if not re.match(r'^[a-zA-Z0-9_]{3,20}$', data['username']):
             return jsonify({'error': 'Username must be 3-20 alphanumeric characters'}), 400
         
-        # Validate email format
         if not validate_email(data['email']):
             return jsonify({'error': 'Invalid email format'}), 400
         
-        # Validate password strength
         is_valid, msg = validate_password_strength(data['password'])
         if not is_valid:
             return jsonify({'error': msg}), 400
         
-        # Check if user already exists
         if User.query.filter_by(username=data['username']).first():
             return jsonify({'error': 'Username already exists'}), 409
         
         if User.query.filter_by(email=data['email']).first():
             return jsonify({'error': 'Email already exists'}), 409
         
-        # Hash password
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         
-        # Create new user
         new_user = User(
             username=data['username'],
             name=data.get('name', ''),
@@ -91,7 +84,6 @@ def login():
         if not data.get('username') or not data.get('password'):
             return jsonify({'error': 'Username and password are required'}), 400
         
-        # Find user by username or email
         user = User.query.filter(
             (User.username == data['username']) | (User.email == data['username'])
         ).first()
@@ -99,15 +91,12 @@ def login():
         if not user:
             return jsonify({'error': 'username not found.'}), 401
         
-        # Check if user is active
         if not user.is_active:
             return jsonify({'error': 'Account is disabled'}), 403
         
-        # Verify password
         if not bcrypt.check_password_hash(user.password, data['password']):
             return jsonify({'error': 'Invalid credentials'}), 401
         
-        # Create tokens
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
         
@@ -169,11 +158,9 @@ def change_password():
         if not data.get('old_password') or not data.get('new_password'):
             return jsonify({'error': 'Old password and new password are required'}), 400
         
-        # Verify old password
         if not bcrypt.check_password_hash(user.password, data['old_password']):
             return jsonify({'error': 'Invalid old password'}), 401
         
-        # Hash and update new password
         user.password = bcrypt.generate_password_hash(data['new_password']).decode('utf-8')
         db.session.commit()
         

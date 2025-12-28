@@ -27,14 +27,20 @@ const ENDPOINTS = {
     
     // Cart
     CART: '/cart',
-    CART_ITEM: (id) => `/cart/${id}`,
+    CART_ADD: '/cart/items',
+    CART_ITEM: (id) => `/cart/items/${id}`,
     
     // Orders
     ORDERS: '/orders',
+    ORDER_CHECKOUT: '/orders/checkout',
     ORDER_DETAIL: (id) => `/orders/${id}`,
     
     // Reviews
     REVIEWS: (bookId) => `/books/${bookId}/reviews`,
+    
+    // Users
+    USERS: '/users',
+    USER_PROFILE: '/users/profile',
     
     // Admin
     ADMIN_BOOKS: '/admin/books',

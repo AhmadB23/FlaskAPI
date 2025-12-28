@@ -130,12 +130,13 @@
         async function loadCategories() {
             try {
                 const response = await getCategories();
-                categories = response;
+                const categoryList = response.data || [];
+                categories = categoryList;
                 const select = document.getElementById('categoryFilter');
-                response.forEach(cat => {
+                categoryList.forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat.id;
-                    option.textContent = cat.name;
+                    option.textContent = cat.category_type;
                     select.appendChild(option);
                 });
             } catch (error) {
@@ -147,12 +148,13 @@
         async function loadAuthors() {
             try {
                 const response = await getAuthors();
-                authors = response;
+                const authorList = response.data || [];
+                authors = authorList;
                 const select = document.getElementById('authorFilter');
-                response.forEach(author => {
+                authorList.forEach(author => {
                     const option = document.createElement('option');
                     option.value = author.id;
-                    option.textContent = author.name;
+                    option.textContent = author.author_name;
                     select.appendChild(option);
                 });
             } catch (error) {
@@ -174,8 +176,9 @@
                 };
                 
                 const response = await getBooks(filters);
+                const books = response.books || [];
                 
-                if (response.length === 0) {
+                if (books.length === 0) {
                     container.innerHTML = `
                         <div class="col-12">
                             <div class="empty-state">
@@ -188,14 +191,14 @@
                     return;
                 }
                 
-                container.innerHTML = response.map(book => `
+                container.innerHTML = books.map(book => `
                     <div class="col-md-4 mb-4">
                         <div class="book-card">
                             <img src="${book.image_url || 'assets/images/placeholder-book.svg'}" 
                                  class="card-img-top" alt="${book.title}">
                             <div class="card-body">
                                 <h5 class="card-title">${book.title}</h5>
-                                <p class="author">${book.author_name || 'Unknown Author'}</p>
+                                <p class="author">${book.author?.name || 'Unknown Author'}</p>
                                 <div class="rating mb-2">
                                     ${renderStars(book.average_rating || 0)}
                                     <span class="text-muted ms-1">(${book.review_count || 0})</span>

@@ -167,7 +167,8 @@
             
             try {
                 const response = await getBooks();
-                const featured = response.slice(0, 6);
+                const books = response.books || [];
+                const featured = books.slice(0, 6);
                 
                 container.innerHTML = featured.map(book => `
                     <div class="col-md-4 mb-4">
@@ -176,7 +177,7 @@
                                  class="card-img-top" alt="${book.title}">
                             <div class="card-body">
                                 <h5 class="card-title">${book.title}</h5>
-                                <p class="author">${book.author_name || 'Unknown Author'}</p>
+                                <p class="author">${book.author?.name || 'Unknown Author'}</p>
                                 <div class="rating mb-2">
                                     ${renderStars(book.average_rating || 0)}
                                     <span class="text-muted ms-1">(${book.review_count || 0})</span>
@@ -210,7 +211,8 @@
             const container = document.getElementById('categoriesGrid');
             
             try {
-                const categories = await getCategories();
+                const response = await getCategories();
+                const categories = response.data || [];
                 
                 container.innerHTML = categories.slice(0, 6).map(cat => `
                     <div class="col-md-4 mb-3">
@@ -218,8 +220,8 @@
                             <div class="card text-center h-100">
                                 <div class="card-body">
                                     <i class="fas fa-bookmark fa-3x mb-3" style="color: var(--primary);"></i>
-                                    <h5>${cat.name}</h5>
-                                    <p class="text-muted mb-0">${cat.description || 'Explore books'}</p>
+                                    <h5>${cat.category_type}</h5>
+                                    <p class="text-muted mb-0">Explore books</p>
                                 </div>
                             </div>
                         </a>
