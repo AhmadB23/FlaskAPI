@@ -1,6 +1,6 @@
 // API Configuration
 const CONFIG = {
-    API_BASE_URL: 'http://localhost:5000/api/v1',
+    API_BASE_URL: 'https://daastan.onrender.com/api/v1',
     TOKEN_KEY: 'access_token',
     REFRESH_TOKEN_KEY: 'refresh_token',
     USER_KEY: 'user_data',
