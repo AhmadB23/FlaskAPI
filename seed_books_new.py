@@ -130,11 +130,20 @@ def seed_books():
                 
                 if existing:
                     existing_count += 1
-                    # Update existing book with image_url if it doesn't have one
+                    # Update existing book with new data
+                    updated = False
                     if not existing.image_url and book_data.get('image_url'):
                         existing.image_url = book_data['image_url']
+                        updated = True
+                    if existing.price != book_data['price']:
+                        existing.price = book_data['price']
+                        updated = True
+                    if existing.description != book_data.get('description', ''):
+                        existing.description = book_data.get('description', '')
+                        updated = True
+                    if updated:
                         db.session.commit()
-                        print(f"✓ Updated image for: {existing.title}")
+                        print(f"✓ Updated: {existing.title} - PKR {existing.price}")
                     continue
             except Exception as e:
                 print(f"⚠ Error checking book '{book_data.get('title')}': {str(e)}")
