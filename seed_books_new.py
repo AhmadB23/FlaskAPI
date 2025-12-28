@@ -122,17 +122,24 @@ def seed_books():
         skipped_count = 0
         
         for book_data in books_data:
-            # Check if book already exists by ISBN or title
-            existing = Book.query.filter(
-                (Book.isbn == book_data.get('isbn')) | (Book.title == book_data['title'])
-            ).filter_by(is_deleted=False).first()
-            
-            if existing:
+            try:
+                # Check if book already exists by ISBN or title
+                existing = Book.query.filter(
+                    (Book.isbn == book_data.get('isbn')) | (Book.title == book_data['title'])
+                ).filter_by(is_deleted=False).first()
+                
+                if existing:
+                    existing_count += 1
+                    # Update existing book with image_url if it doesn't have one
+                    if not existing.image_url and book_data.get('image_url'):
+                        existing.image_url = book_data['image_url']
+                        db.session.commit()
+                        print(f"✓ Updated image for: {existing.title}")
+                    continue
+            except Exception as e:
+                print(f"⚠ Error checking book '{book_data.get('title')}': {str(e)}")
                 existing_count += 1
-                # Update existing book with image_url if it doesn't have one
-                if not existing.image_url and book_data.get('image_url'):
-                    existing.image_url = book_data['image_url']
-                    print(f"✓ Updated image for: {existing.title}")
+                db.session.rollback()
                 continue
             
             # Get author and category IDs
@@ -150,25 +157,35 @@ def seed_books():
                 continue
             
             # Create book
-            book = Book(
-                id=str(uuid.uuid4()),
-                title=book_data['title'],
-                isbn=book_data.get('isbn'),
-                price=book_data['price'],
-                stock_quantity=book_data.get('stock', random.randint(20, 100)),
-                description=book_data.get('description', ''),
-                image_url=book_data.get('image_url'),
-                author_id=author_id,
-                category_id=category_id,
-                is_active=1,
-                role=0,
-                created_by='system'
-            )
-            db.session.add(book)
-            added_count += 1
-            print(f"✓ Added: {book.title} - PKR {book.price}")
+            try:
+                book = Book(
+                    id=str(uuid.uuid4()),
+                    title=book_data['title'],
+                    isbn=book_data.get('isbn'),
+                    price=book_data['price'],
+                    stock_quantity=book_data.get('stock', random.randint(20, 100)),
+                    description=book_data.get('description', ''),
+                    image_url=book_data.get('image_url'),
+                    author_id=author_id,
+                    category_id=category_id,
+                    is_active=1,
+                    role=0,
+                    created_by='system'
+                )
+                db.session.add(book)
+                db.session.flush()  # Flush to catch integrity errors before commit
+                added_count += 1
+                print(f"✓ Added: {book.title} - PKR {book.price}")
+            except Exception as e:
+                db.session.rollback()
+                print(f"⚠ Skipped (already exists): {book_data['title']}")
+                existing_count += 1
         
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(f"⚠ Error committing books: {str(e)}")
         
         print(f"\n{'=' * 60}")
         print(f"✓ Books: {added_count} added, {existing_count} already existed, {skipped_count} skipped")
